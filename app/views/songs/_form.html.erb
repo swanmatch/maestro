@@ -1,0 +1,20 @@
+<%- only_show ||= false -%>
+<%= simple_form_for(@song) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs well">
+    <%= f.input :title, disabled: only_show %>
+    <%= f.input :composer, disabled: only_show %>
+    <%= f.input :tempo, disabled: only_show %>
+    <%= f.input :key, disabled: only_show %>
+    <%= f.input :scale, disabled: only_show %>
+    <%= f.input :score, disabled: only_show %>
+    <%= f.hidden_field :lock_version %>
+  </div>
+
+  <%- unless only_show -%>
+  <div class="form-actions">
+    <%= f.button :submit, class: "btn btn-primary" %>
+  </div>
+  <%- end -%>
+<% end %>

@@ -50,4 +50,4 @@ test:
 production:
   <<: *default
   database: Maestro_production
-  username: Maestro
+  username: root

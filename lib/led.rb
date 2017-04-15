@@ -86,7 +86,7 @@ module LED
               color = COLORS[message.note % 12]
 #              puts color
               Thread.new do
-                LED.kakusan(hat, 42, color)
+                 LED.kakusan(hat, rand(1..57), color)
               end
             end
           end

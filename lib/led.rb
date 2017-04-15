@@ -1,5 +1,5 @@
 module LED
-  colors = [
+  COLORS = [
     Ws2812::Color.new(255, 0, 0),
     Ws2812::Color.new(255, 127, 0),
     Ws2812::Color.new(255, 255, 0),
@@ -13,60 +13,81 @@ module LED
     Ws2812::Color.new(255, 0, 255),
     Ws2812::Color.new(255, 0, 127)
   ]
+  BLACK = Ws2812::Color.new(0,0,0)
 
-  def disp(hat, from_x, from_y, to_x, to_y, color, time = 0.15)
+  MATRIX = [
+    [  0,  0,  1,  2,  3,  0,  0,  0,  0,  0,  0,  0,  0],
+    [  0,  8,  7,  6,  5,  4,  0,  0,  0,  0, 22, 21, 20],
+    [  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  0,  0],
+    [ 32, 31, 30, 29, 28, 27, 26, 25, 24, 23,  0,  0,  0],
+    [ 33, 34,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
+    [ 36, 35,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
+    [ 37, 38, 39, 40, 41, 42, 43, 44, 45,  0,  0,  0,  0],
+    [  0,  0,  0,  0, 50, 49, 48, 47, 46,  0,  0,  0,  0],
+    [ 51, 52, 53, 54, 55,  0,  0,  0,  0, 56, 57,  0,  0],
+  ]
+
+  def self.disp(hat, from_x, from_y, to_x, to_y, color, time = 0.15)
     (from_x...to_x).each do |x|
-      hat[x, from_y] = color if (0..7).include?(x) && (0..7).include?(from_y)
+      hat[MATRIX[from_y][x]-1] = color if (0...13).include?(x) && (0..8).include?(from_y) && MATRIX[from_y][x] != 0
     end
     (from_y..to_y).each do |y|
-      hat[to_x, y] = color if (0..7).include?(to_x) && (0..7).include?(y)
+      hat[MATRIX[y][to_x]-1] = color if (0...13).include?(to_x) && (0..8).include?(y) && MATRIX[y][to_x] != 0
     end
     (from_x...to_x).each do |x|
-      hat[x, to_y] = color if (0..7).include?(x) && (0..7).include?(to_y)
+      hat[MATRIX[to_y][x]-1] = color if (0...13).include?(x) && (0..8).include?(to_y) && MATRIX[to_y][x] != 0
     end
     (from_y...to_y).each do |y|
-      hat[from_x, y] = color if (0..7).include?(from_x) && (0..7).include?(y)
+      hat[MATRIX[y][from_x]-1] = color if (0...13).include?(from_x) && (0..8).include?(y) && MATRIX[y][from_x] != 0
     end
     hat.show
 
     sleep time
 
-    black = Ws2812::Color.new(0,0,0)
     (from_x...to_x).each do |x|
-      hat[x, from_y] = black if (0..7).include?(x) && (0..7).include?(from_y)
+      hat[MATRIX[from_y,][x]-1] = LED::BLACK if (0...13).include?(x) && (0..8).include?(from_y) && MATRIX[from_y][x] != 0
     end
     (from_y..to_y).each do |y|
-      hat[to_x, y] = black if (0..7).include?(to_x) && (0..7).include?(y)
+      hat[MATRIX[y,][to_x]-1] = LED::BLACK if (0...13).include?(to_x) && (0..8).include?(y) && MATRIX[y][to_x] != 0
     end
     (from_x...to_x).each do |x|
-      hat[x, to_y] = black if (0..7).include?(x) && (0..7).include?(to_y)
+      hat[MATRIX[to_y][x]-1] = LED::BLACK if (0...13).include?(x) && (0..8).include?(to_y) && MATRIX[to_y][x] != 0
     end
     (from_y...to_y).each do |y|
-      hat[from_x, y] = black if (0..7).include?(from_x) && (0..7).include?(y)
+      hat[MATRIX[y][from_x]-1] = LED::BLACK if (0...13).include?(from_x) && (0..8).include?(y) && MATRIX[y][from_x] != 0
     end
     hat.show
   end
 
-  def kakusan(hat, x, y, color)
+  def self.kakusan(hat, num, color)
+    x, y = 0
+    y = MATRIX.index do |x_s|
+      x = x_s.index do |y_s|
+        y_s == num
+      end
+    end
     disp(hat, x, y, x, y, color)
-    8.times do |i|
-      disp(hat, x-i, y-i, x+i, y+i, color)
+    13.times do |i|
+      LED.disp(hat, x-i, y-i, x+i, y+i, color)
     end
   end
 
 
-  def play
+  def self.play
     input = UniMIDI::Input.first
-    $hat = Ws2812::UnicornHAT.new
+    hat = Ws2812::Basic.new(57, 18).open
 
     begin
       MIDI.using(input) do
         receive :note do |message|
           if 18 < message.velocity
+#            puts message.note
             if Thread.list.size < 24
-              color = colors[message.note % 12]
+              color = COLORS[message.note % 12]
+#              puts color
               Thread.new do
-                kakusan($hat, rand(0..7), rand(0..7), color)
+#                LED.kakusan(hat, 42, color)
+                 LED.kakusan(hat, rand(1..57), color)
               end
             end
           end

@@ -27,8 +27,15 @@
       <ul class="nav navbar-nav hidden-xs">
         <li><%= link_to '唄', songs_path %></li>
       </ul>
-      <form class="navbar-form navbar-right">
-        <input class="form-control" placeholder="Search..." type="text">
+      <ul class="nav navbar-nav navbar-right">
+        <li><%=
+        if @unicorn_playing
+          link_to '発光停止', unicorn_stop_path
+        else
+          link_to '発光開始', unicorn_play_path
+        end
+        %>
+        </li>
       </form>
     </div><!-- /.nav-collapse -->
   </div><!-- /.container -->

@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
   resources :songs
+
+  get 'unicorn/stop' => 'application#unicorn_stop', as: :unicorn_stop
+  get 'unicorn/play' => 'application#unicorn_play', as: :unicorn_play
+
+  root 'songs#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

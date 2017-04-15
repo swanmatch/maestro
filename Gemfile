@@ -74,5 +74,8 @@ gem 'simple_form'
 gem 'bootstrap-sass'
 
 #gem 'rqrcode'
+gem 'ws2812'
+gem 'micromidi'
+
 
 gem 'puma'

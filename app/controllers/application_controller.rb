@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
     unicorn_stop_action
     unicorn_thread =
       Thread.new do
-        LED.play
+        LED.play2
         #while(true) do end
       end
     unicorn_thread[:name] = 'unicorn_hat'
@@ -36,5 +36,12 @@ class ApplicationController < ActionController::Base
     }.each{|th|
       th.kill
     }
+  end
+
+  def flash
+    Thread.new do
+      LED.flash
+    end
+    render nothing: true
   end
 end

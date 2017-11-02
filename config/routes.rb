@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   get 'unicorn/stop' => 'application#unicorn_stop', as: :unicorn_stop
   get 'unicorn/play' => 'application#unicorn_play', as: :unicorn_play
+  get 'flash' => 'application#flash', as: :flash
 
   root 'songs#index'
   # The priority is based upon order of creation: first created -> highest priority.

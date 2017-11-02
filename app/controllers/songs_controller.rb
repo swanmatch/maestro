@@ -45,6 +45,13 @@ class SongsController < ApplicationController
     redirect_to songs_url, notice: 'Song was successfully destroyed.'
   end
 
+  def flash
+    Thread.new do
+      LED.flash
+    end
+    render :none
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_song
